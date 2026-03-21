@@ -7,9 +7,9 @@ public class RouteToGateway {
         static int sa; // sa router #
     public static void main(String[] args) {
         parser();
+        int[][] transpose = transposeGraph();
 
     }
-
     static void parser() {
         Scanner sc = new Scanner(System.in);
 
@@ -35,5 +35,18 @@ public class RouteToGateway {
         sa = Integer.parseInt(sc.nextLine());
         sc.close();
 
+    }
+
+    // purpose: efficiency (solves needed results in at most 2 calls to Dijkstra's alg)
+    static int[][] transposeGraph() {
+        int[][] transpose = new int[n + 1][n + 1];
+
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n; j++) {
+                transpose[j][i] = matrix[i][j];
+            }
+        }
+
+        return transpose;
     }
 }
