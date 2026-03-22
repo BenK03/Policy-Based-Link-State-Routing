@@ -118,4 +118,25 @@ public class RouteToGateway {
         }
         return false;
     }
+
+    // move datagram towards SA
+    static int toSA(int source, int[] parentToSA) {
+        if (source == sa) {
+            return sa;
+        }
+
+        int curr = source;
+        int nextHop = -1;
+
+        while (parentToSA[curr] != -1) {
+            nextHop = parentToSA[curr];
+            curr = parentToSA[curr];
+        }
+
+        if (curr != sa) {
+            return -1;
+        }
+
+        return nextHop;
+    }
 }
