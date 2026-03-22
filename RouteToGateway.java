@@ -125,7 +125,16 @@ public class RouteToGateway {
     }
 
     // move datagram towards SA
-    static int nextRouterToSA(int gateway, int[] parentFromSA) {
+    static int nextRouterToSA(int source, int[] parentToSA) {
+        if (source == sa) {
+            return sa;
+        }
+
+        return parentToSA[source];
+    }
+
+    // move datagram towards gateway
+    static int nextRouterFromSA(int gateway, int[] parentFromSA) {
         int curr = gateway;
         int nextHop = -1;
 
@@ -156,7 +165,12 @@ public class RouteToGateway {
                 System.out.println(gateway + " -1 -1");
             } else {
                 int total = costToSA + costFromSA;
-                int next = nextRouterToSA(source, toSA.parent);
+                int next;
+                if (source == sa) {
+                    next = nextRouterFromSA(gateway, fromSA.parent);
+                } else {
+                    next = nextRouterToSA(source, toSA.parent);
+                }
 
                 System.out.println(gateway + " " + total + " " + next);
             }
@@ -211,5 +225,4 @@ public class RouteToGateway {
         }
         return true;
     }
-
 }
