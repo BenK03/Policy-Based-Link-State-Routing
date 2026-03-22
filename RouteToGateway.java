@@ -11,9 +11,11 @@ public class RouteToGateway {
 
     public static void main(String[] args) {
         parser();
-        int[][] transpose = transposeGraph();
+        int[][] policyGraph = policyGraph();
+        int[][] transpose = transposeGraph(policyGraph);
 
-        DijkstraRes fromSA = dijkstra(matrix, sa); // compute shortest distances from SA
+
+        DijkstraRes fromSA = dijkstra(policyGraph, sa); // compute shortest distances from SA
         DijkstraRes toSA = dijkstra(transpose, sa); // compute shortest distances to SA (transpose)
 
         for (int i = 1; i <= n; i++) {
@@ -52,7 +54,7 @@ public class RouteToGateway {
     }
 
     // purpose: efficiency (solves needed results in at most 2 calls to Dijkstra's alg)
-    static int[][] transposeGraph() {
+    static int[][] transposeGraph(int[][] matrix) {
         int[][] transpose = new int[n + 1][n + 1];
 
         for (int i = 1; i <= n; i++) {
@@ -62,6 +64,25 @@ public class RouteToGateway {
         }
 
         return transpose;
+    }
+
+    // take out illegal paths and make a new matrix
+    static int[][] policyGraph() {
+        int[][] policy = new int[n + 1][n + 1];
+
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n; j++) {
+                policy[i][j] = matrix[i][j];
+            }
+        }
+
+        for (int g : gateways) {
+            for (int j = 1; j <= n; j++) {
+                policy[g][j] = -1;
+            }
+            policy[g][g] = 0;
+        }
+        return policy;
     }
 
     static class DijkstraRes {
@@ -158,14 +179,13 @@ public class RouteToGateway {
         for (int gateway : gateways) {
             int costToSA = toSA.dist[source];
             int costFromSA = fromSA.dist[gateway];
-            boolean validToSA = validToSA(source, toSA.parent);
-            boolean validFromSA = validSAToGateway(gateway, fromSA.parent);
 
-            if (costToSA == Integer.MAX_VALUE || costFromSA == Integer.MAX_VALUE || !validToSA || !validFromSA) {
+            if (costToSA == Integer.MAX_VALUE || costFromSA == Integer.MAX_VALUE) {
                 System.out.println(gateway + "   -1   -1");
             } else {
                 int total = costToSA + costFromSA;
                 int next;
+
                 if (source == sa) {
                     next = nextRouterFromSA(gateway, fromSA.parent);
                 } else {
