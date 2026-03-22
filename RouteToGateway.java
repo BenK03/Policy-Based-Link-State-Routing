@@ -125,12 +125,20 @@ public class RouteToGateway {
     }
 
     // move datagram towards SA
-    static int nextRouterToSA(int source, int[] parentToSA) {
-        if (source == sa) {
-            return sa;
+    static int nextRouterToSA(int gateway, int[] parentFromSA) {
+        int curr = gateway;
+        int nextHop = -1;
+
+        while (parentFromSA[curr] != -1) {
+            nextHop = curr;
+            curr = parentFromSA[curr];
         }
 
-        return parentToSA[source];
+        if (curr != sa) {
+            return -1;
+        }
+
+        return nextHop;
     }
 
     // Forwarding Table implementation
@@ -141,9 +149,11 @@ public class RouteToGateway {
         for (int gateway : gateways) {
             int costToSA = toSA.dist[source];
             int costFromSA = fromSA.dist[gateway];
+            boolean validToSA = validToSA(source, toSA.parent);
+            boolean validFromSA = validSAToGateway(gateway, fromSA.parent);
 
-            if (costToSA == Integer.MAX_VALUE || costFromSA == Integer.MAX_VALUE) {
-                System.out.println(gateway + " -1 -1"); // absence of directed edge
+            if (costToSA == Integer.MAX_VALUE || costFromSA == Integer.MAX_VALUE || !validToSA || !validFromSA) {
+                System.out.println(gateway + " -1 -1");
             } else {
                 int total = costToSA + costFromSA;
                 int next = nextRouterToSA(source, toSA.parent);
@@ -152,4 +162,54 @@ public class RouteToGateway {
             }
         }
     }
+
+    // checks to see if a gateway router comes before a SA router (policy check)
+    static boolean validToSA(int source, int[] parentToSA) {
+        if (source == sa) {
+            return true;
+        }
+
+        if (parentToSA[source] == -1) {
+            return false;
+        }
+
+        int curr = source;
+
+        while (curr != sa) {
+            int next = parentToSA[curr];
+            if (next == -1) {
+                return false;
+            }
+            if (next != sa && isGateway(next)) {
+                return false;
+            }
+            curr = next;
+        }
+        return true;
+    }
+
+    // checks to see if path only goes through one gateway router from SA router (policy check)
+    static boolean validSAToGateway(int gateway, int[] parentFromSA) {
+        if (gateway == sa) {
+            return true;
+        }
+
+        if (parentFromSA[gateway] == -1) {
+            return false;
+        }
+
+        int curr = gateway;
+
+        while (curr != sa) {
+            if (curr != gateway && isGateway(curr)) {
+                return false;
+            }
+            curr = parentFromSA[curr];
+            if (curr == -1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
