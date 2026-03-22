@@ -18,7 +18,7 @@ public class RouteToGateway {
 
         for (int i = 1; i <= n; i++) {
             if (!isGateway(i)) {
-                printForwardingTable(i, fromSA, toSA);
+                forwardingTable(i, fromSA, toSA);
             }
         }
     }
@@ -151,7 +151,7 @@ public class RouteToGateway {
     }
 
     // Forwarding Table implementation
-    static void printForwardingTable(int source, DijkstraRes fromSA, DijkstraRes toSA) {
+    static void forwardingTable(int source, DijkstraRes fromSA, DijkstraRes toSA) {
         System.out.println("Forwarding Table for " + source);
         System.out.println("To Cost Next Hop");
 
@@ -162,7 +162,7 @@ public class RouteToGateway {
             boolean validFromSA = validSAToGateway(gateway, fromSA.parent);
 
             if (costToSA == Integer.MAX_VALUE || costFromSA == Integer.MAX_VALUE || !validToSA || !validFromSA) {
-                System.out.println(gateway + " -1 -1");
+                System.out.println(gateway + "   -1   -1");
             } else {
                 int total = costToSA + costFromSA;
                 int next;
@@ -172,7 +172,7 @@ public class RouteToGateway {
                     next = nextRouterToSA(source, toSA.parent);
                 }
 
-                System.out.println(gateway + " " + total + " " + next);
+                System.out.println(gateway + "   " + total + "   " + next);
             }
         }
     }
