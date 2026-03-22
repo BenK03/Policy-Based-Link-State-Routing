@@ -61,22 +61,22 @@ public class RouteToGateway {
 
     static class DijkstraRes {
         int[] dist;
-        int[] succ;
+        int[] parent;
 
-        DijkstraRes(int[] dist, int[] succ) {
+        DijkstraRes(int[] dist, int[] parent) {
             this.dist = dist;
-            this.succ = succ;
+            this.parent = parent;
         }
     }
 
     static DijkstraRes dijkstra(int[][] dg, int start) {
         int[] dist = new int[n + 1]; // distance array
-        int[] succ = new int[n + 1]; // successor array
+        int[] parent = new int[n + 1]; // parent array
         boolean[] visited = new boolean[n + 1];
 
         // set every distance to inf (Integer.MAX_VALUE)
         Arrays.fill(dist, Integer.MAX_VALUE);
-        Arrays.fill(succ, -1); // set every successor to -1
+        Arrays.fill(parent, -1); // set every parent to -1
 
         dist[start] = 0; // starting router
         for (int count = 1; count <= n; count++) { // run dijkstra to n times
@@ -100,12 +100,22 @@ public class RouteToGateway {
                 if (dg[u][v] != -1 && !visited[v]) {
                     if (dist[u] != Integer.MAX_VALUE && dist[u] + dg[u][v] < dist[v]) {
                         dist[v] = dist[u] + dg[u][v];
-                        succ[v] = u;
+                        parent[v] = u;
                     }
                 }
             }
         }
 
-        return new DijkstraRes(dist, succ);
+        return new DijkstraRes(dist, parent);
+    }
+
+    // function to check if router is a gateway router
+    static boolean isGateway(int router) {
+        for (int g : gateways) {
+            if (g == router) {
+                return true;
+            }
+        }
+        return false;
     }
 }
