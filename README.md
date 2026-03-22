@@ -1,8 +1,8 @@
 # 🧑🏻‍💻 RouteToGateway
 
-RouteToGateway is a Java program that reads a directed weighted graph from standard input and generates forwarding tables for all non-gateway routers. The program computes the least-cost valid routes to each gateway while enforcing the Security Agent (`SA`) routing policy required in the assignment.
+RouteToGateway is a Java program that reads a directed weighted graph from standard input and generates forwarding tables for all non-gateway routers. The program computes the least-cost valid routes to each gateway while enforcing a Security Agent (`SA`) routing policy.
 
-# 🧑‍🔧 Architecture Overview
+## 🧑‍🔧 Architecture Overview
 
 - Java program reads:
   - number of routers
@@ -16,7 +16,7 @@ RouteToGateway is a Java program that reads a directed weighted graph from stand
   - once on the transpose graph
 - The results are used to generate forwarding tables for every non-gateway router
 
-# ⭐️ Features
+## ⭐️ Features
 
 - 📥 Standard input parsing for the full graph input
 - 🧭 Directed weighted graph routing
@@ -27,16 +27,16 @@ RouteToGateway is a Java program that reads a directed weighted graph from stand
 - ❌ Handles unreachable routes with `-1 -1`
 - ⚡ Uses at most two runs of standard Dijkstra’s algorithm
 
-# 📝 Requirements
+## 📝 Requirements
 
 - Java 17+  
   or any Java version that supports `javac` and `java`
 
-# 📁 Files
+## 📁 Files
 
 - `RouteToGateway.java` — main program file
 
-# ⚙️ How It Works
+## ⚙️ How It Works
 
 The program enforces the following routing policy:
 
@@ -46,7 +46,7 @@ The program enforces the following routing policy:
 
 To support this, the program builds a modified policy graph where gateway routers cannot be used as intermediate forwarding nodes.
 
-# 📌 Full Example
+## 📌 Full Example
 
 Compile the program with:
 
