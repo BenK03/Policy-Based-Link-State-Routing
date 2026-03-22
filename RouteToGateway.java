@@ -16,6 +16,11 @@ public class RouteToGateway {
         DijkstraRes fromSA = dijkstra(matrix, sa); // compute shortest distances from SA
         DijkstraRes toSA = dijkstra(transpose, sa); // compute shortest distances to SA (transpose)
 
+        for (int i = 1; i <= n; i++) {
+            if (!isGateway(i)) {
+                printForwardingTable(i, fromSA, toSA);
+            }
+        }
     }
 
     // parser for directed graph
@@ -120,23 +125,31 @@ public class RouteToGateway {
     }
 
     // move datagram towards SA
-    static int toSA(int source, int[] parentToSA) {
+    static int nextRouterToSA(int source, int[] parentToSA) {
         if (source == sa) {
             return sa;
         }
 
-        int curr = source;
-        int nextHop = -1;
+        return parentToSA[source];
+    }
 
-        while (parentToSA[curr] != -1) {
-            nextHop = parentToSA[curr];
-            curr = parentToSA[curr];
+    // Forwarding Table implementation
+    static void printForwardingTable(int source, DijkstraRes fromSA, DijkstraRes toSA) {
+        System.out.println("Forwarding Table for " + source);
+        System.out.println("To Cost Next Hop");
+
+        for (int gateway : gateways) {
+            int costToSA = toSA.dist[source];
+            int costFromSA = fromSA.dist[gateway];
+
+            if (costToSA == Integer.MAX_VALUE || costFromSA == Integer.MAX_VALUE) {
+                System.out.println(gateway + " -1 -1"); // absence of directed edge
+            } else {
+                int total = costToSA + costFromSA;
+                int next = nextRouterToSA(source, toSA.parent);
+
+                System.out.println(gateway + " " + total + " " + next);
+            }
         }
-
-        if (curr != sa) {
-            return -1;
-        }
-
-        return nextHop;
     }
 }
